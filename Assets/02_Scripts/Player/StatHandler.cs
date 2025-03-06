@@ -17,14 +17,6 @@ public class StatHandler : MonoBehaviour
         OnHealthChanged?.Invoke(currentHealth, maxHealth); // 체력 초기화 알림
     }
 
-    private void Update()
-    {
-        if (currentHealth > 50f)
-        {
-            TakeDamage(0.1f);
-        }
-    }
-
     public void TakeDamage(float damage)
     {
         currentHealth -= damage;
@@ -41,6 +33,6 @@ public class StatHandler : MonoBehaviour
     private void Die()
     {
         Debug.Log("Player Died");
-        gameObject.SetActive(false); // 죽으면 비활성화
+        gameObject.SetActive(false); // 죽으면 일단 플레이어 비활성화
     }
 }
