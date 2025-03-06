@@ -8,7 +8,7 @@ public class StatHandler : MonoBehaviour
     public static event Action<float, float> OnHealthChanged;
 
     public float maxHealth = 100f;
-    private float currentHealth;
+    public float currentHealth;
 
 
     void Start()
@@ -19,7 +19,10 @@ public class StatHandler : MonoBehaviour
 
     private void Update()
     {
-        TakeDamage(0.1f);
+        if (currentHealth > 50f)
+        {
+            TakeDamage(0.1f);
+        }
     }
 
     public void TakeDamage(float damage)
