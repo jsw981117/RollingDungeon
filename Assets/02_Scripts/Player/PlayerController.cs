@@ -14,17 +14,31 @@ public class PlayerController : MonoBehaviour
 
     // Ground 레이어 값 가져오기
     private int groundLayer;
-    public float rotateSpeed = 10.0f;       // 회전 속도
+    public float rotateSpeed = 10.0f; // 회전 속도
 
     float h, v;
 
-    private Transform camTransform;     // 메인 카메라의 Transform
+    private Transform camTransform; // 메인 카메라의 Transform
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         groundLayer = LayerMask.NameToLayer("Ground"); // "Ground" 레이어 값 가져오기
         camTransform = Camera.main.transform; // 메인 카메라의 Transform을 가져옴
+    }
+
+    void OnEnable()
+    {
+        PlayerEvent.OnScoreIncrease += IncreaseScore;
+        PlayerEvent.OnHealthIncrease += Heal;
+        PlayerEvent.OnStaminaIncrease += IncreaseStamina;
+    }
+
+    void OnDisable()
+    {
+        PlayerEvent.OnScoreIncrease -= IncreaseScore;
+        PlayerEvent.OnHealthIncrease -= Heal;
+        PlayerEvent.OnStaminaIncrease -= IncreaseStamina;
     }
 
     void Update()
@@ -55,7 +69,7 @@ public class PlayerController : MonoBehaviour
     void Move()
     {
         Vector3 moveDirection = new Vector3(moveInput.x, 0, moveInput.y);
-        //rb.velocity = new Vector3(moveDirection.x * moveSpeed, rb.velocity.y, moveDirection.z * moveSpeed);
+        // rb.velocity = new Vector3(moveDirection.x * moveSpeed, rb.velocity.y, moveDirection.z * moveSpeed);
         Vector3 camForward = camTransform.forward;
         Vector3 camRight = camTransform.right;
         camForward.y = 0;
@@ -87,5 +101,20 @@ public class PlayerController : MonoBehaviour
         {
             isGrounded = true;
         }
+    }
+
+    public void IncreaseScore(int value)
+    {
+        Debug.Log($"Score increased by {value}");
+    }
+
+    public void Heal(int value)
+    {
+        Debug.Log($"Health increased by {value}");
+    }
+
+    public void IncreaseStamina(int value)
+    {
+        Debug.Log($"Stamina increased by {value}");
     }
 }
