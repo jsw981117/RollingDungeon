@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
@@ -12,13 +14,18 @@ public class PlayerController : MonoBehaviour
     public float jumpForce = 7f;
     private bool isGrounded;
 
-    // Ground 레이어 값 가져오기
     private int groundLayer;
     private int trapLayer;
 
     public float rotateSpeed = 10.0f; // 회전 속도
     private Transform camTransform; // 메인 카메라의 Transform
     private StatHandler statHandler;
+
+    [Header("Item Detection")]
+    public TextMeshProUGUI descText; // UI Text 컴포넌트 참조
+    public float rayDistance = 5f; // 레이 캐스트 거리
+    public Vector3 rayBoxSize = new Vector3(0.5f, 0.5f, 0.5f); // 레이 박스 크기
+    public LayerMask itemLayerMask; // 아이템 레이어 마스크
 
     void Start()
     {
@@ -47,6 +54,7 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         Move();
+        DetectItemInFront();
     }
 
     void FixedUpdate()
@@ -81,6 +89,48 @@ public class PlayerController : MonoBehaviour
         Vector3 adjustedMoveDirection = camForward.normalized * moveDirection.z + camRight.normalized * moveDirection.x;
 
         rb.velocity = new Vector3(adjustedMoveDirection.x * moveSpeed, rb.velocity.y, adjustedMoveDirection.z * moveSpeed);
+    }
+
+    void DetectItemInFront()
+    {
+        // 플레이어 정면 방향으로 BoxCast 수행
+        RaycastHit[] hits = Physics.BoxCastAll(
+            transform.position,           // 시작 위치
+            rayBoxSize / 2,               // 박스의 반크기 
+            transform.forward,            // 방향
+            Quaternion.identity,          // 회전 없음
+            rayDistance,                  // 거리
+            itemLayerMask                 // 아이템 레이어 마스크
+        );
+
+        // 디버그 시각화
+        Debug.DrawRay(transform.position, transform.forward * rayDistance, Color.red);
+
+        if (hits.Length > 0)
+        {
+            foreach (RaycastHit hit in hits)
+            {
+                // 부딪힌 오브젝트가 IItem 인터페이스를 구현하는지 확인
+                IItem item = hit.collider.GetComponent<IItem>();
+                if (item != null)
+                {
+                    // 아이템 이름을 UI 텍스트에 표시
+                    if (descText != null)
+                    {
+                        descText.text = item.GetItemName();
+                    }
+                    return; // 첫 번째 감지된 아이템만 표시
+                }
+            }
+        }
+        else
+        {
+            // 아이템이 감지되지 않았으면 텍스트 초기화
+            if (descText != null)
+            {
+                descText.text = "";
+            }
+        }
     }
 
     public void OnMove(InputAction.CallbackContext context)

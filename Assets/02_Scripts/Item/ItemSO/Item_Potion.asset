@@ -21,8 +21,13 @@ MonoBehaviour:
   healthValue: 30
   affectsStamina: 0
   staminaValue: 0
-  shouldRespawn: 0
-  respawnDelay: 1
+  isCollectible: 1
+  isPersistentAfterUse: 0
+  isEquippable: 1
+  shouldRespawn: 1
+  respawnDelay: 3
   respawnHeight: 18
   spawnAreaXZ: {x: 20, y: 20}
+  isStarItem: 0
+  spawnProbability: 100
   collectSound: {fileID: 0}
