@@ -1,5 +1,5 @@
 {
-    "name": "New Controls",
+    "name": "PlayerInput",
     "maps": [
         {
             "name": "Player",
@@ -15,15 +15,6 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "Look",
-                    "type": "Value",
-                    "id": "45a973ba-23ca-4d09-8fca-cf2c2a0b03e2",
-                    "expectedControlType": "Delta",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": true
-                },
-                {
                     "name": "Jump",
                     "type": "Button",
                     "id": "580d835e-56fa-4b7c-99b3-302f01e163b9",
@@ -33,27 +24,9 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Inventory",
-                    "type": "Button",
-                    "id": "57701aa4-05cd-4096-a235-503e8f14b2bc",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
                     "name": "Interaction",
                     "type": "Button",
                     "id": "69073011-2408-42f5-a0ec-01500323d6cb",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "Attack",
-                    "type": "Button",
-                    "id": "9ec8e3d3-9337-4e4a-99bf-a97784214f1a",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -118,17 +91,6 @@
                 },
                 {
                     "name": "",
-                    "id": "b7e2cd73-c355-45ad-a480-5380377b050f",
-                    "path": "<Mouse>/delta",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Look",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "4a38a4cd-9d11-4edc-a71f-3342045360dd",
                     "path": "<Keyboard>/space",
                     "interactions": "",
@@ -140,34 +102,12 @@
                 },
                 {
                     "name": "",
-                    "id": "3366dc9a-b422-4105-b8b5-bd4255218905",
-                    "path": "<Keyboard>/tab",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Inventory",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "fee0da0f-c504-4ea5-ab39-ea960857ad15",
                     "path": "<Keyboard>/e",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
                     "action": "Interaction",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "47549a3a-ae7e-4edf-82e6-4bc5f9543763",
-                    "path": "<Mouse>/leftButton",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Attack",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

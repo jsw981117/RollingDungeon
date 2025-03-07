@@ -26,6 +26,7 @@ public class PlayerController : MonoBehaviour
     public float rayDistance = 5f; // 레이 캐스트 거리
     public Vector3 rayBoxSize = new Vector3(0.5f, 0.5f, 0.5f); // 레이 박스 크기
     public LayerMask itemLayerMask; // 아이템 레이어 마스크
+    [SerializeField] private Inventory inventory;
 
     void Start()
     {
@@ -36,6 +37,15 @@ public class PlayerController : MonoBehaviour
         if (statHandler == null)
         {
             Debug.LogError("StatHandler가 Player에 없음!");
+        }
+
+        if (inventory == null)
+        {
+            inventory = FindObjectOfType<Inventory>(); // 인벤토리 UI 자동 찾기
+            if (inventory == null)
+            {
+                Debug.LogError("InventoryUI가 씬에 없음!");
+            }
         }
     }
 
@@ -144,6 +154,15 @@ public class PlayerController : MonoBehaviour
         {
             rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
             isGrounded = false;
+        }
+    }
+
+    // 장착 아이템 사용 입력 처리 (E 키)
+    public void OnInteraction(InputAction.CallbackContext context)
+    {
+        if (context.performed && inventory != null)
+        {
+            inventory.UseStoredItem();
         }
     }
 

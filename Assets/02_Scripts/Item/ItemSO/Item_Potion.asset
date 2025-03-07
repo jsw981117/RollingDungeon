@@ -22,10 +22,10 @@ MonoBehaviour:
   affectsStamina: 0
   staminaValue: 0
   isCollectible: 1
-  isPersistentAfterUse: 0
+  isPersistentAfterUse: 1
   isEquippable: 1
   shouldRespawn: 1
-  respawnDelay: 3
+  respawnDelay: 1
   respawnHeight: 18
   spawnAreaXZ: {x: 20, y: 20}
   isStarItem: 0

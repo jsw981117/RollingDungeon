@@ -29,18 +29,55 @@ public class ItemController : MonoBehaviour, IItem
         }
     }
 
+    void OnEnable()
+    {
+        PlayerEvent.OnItemUse += HandleItemUse;
+    }
+
+    void OnDisable()
+    {
+        PlayerEvent.OnItemUse -= HandleItemUse;
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.layer == playerLayer)
         {
+            if (itemData.isEquippable)
+            {
+                // 이벤트로 인벤토리에 저장
+                PlayerEvent.TriggerItemPickup(itemData);
+
+                // 아이템 스포너에 리스폰 요청
+                if (itemData.shouldRespawn && ItemSpawner.Instance != null)
+                {
+                    ItemSpawner.Instance.QueueItemRespawn(gameObject, itemData);
+                }
+                else
+                {
+                    Destroy(gameObject);
+                }
+            }
+            else
+            {
+                // 즉시 사용 (비장착 아이템)
+                Use();
+            }
+        }
+    }
+
+    private void HandleItemUse(ItemData usedItemData)
+    {
+        // 같은 종류의 아이템인지 확인
+        if (usedItemData == itemData)
+        {
+            // 아이템 사용 효과 적용
             Use();
         }
     }
 
     public void Use()
     {
-        if (isRespawning || itemData == null) return;
-
         // 점수 처리
         if (itemData.affectsScore && GameManager.Instance != null)
         {
@@ -62,10 +99,10 @@ public class ItemController : MonoBehaviour, IItem
         // 효과음 재생
         PlayCollectSound();
 
-        // 리스폰 처리
-        if (itemData.shouldRespawn)
+        // 아이템 스포너에 리스폰 요청
+        if (itemData.shouldRespawn && ItemSpawner.Instance != null)
         {
-            StartCoroutine(ResetItemPosition());
+            ItemSpawner.Instance.QueueItemRespawn(gameObject, itemData);
         }
         else
         {
@@ -82,33 +119,6 @@ public class ItemController : MonoBehaviour, IItem
         }
     }
 
-    private IEnumerator ResetItemPosition()
-    {
-        isRespawning = true;
-
-        // 콜라이더 비활성화
-        if (itemCollider != null)
-        {
-            itemCollider.enabled = false;
-        }
-
-        // 랜덤 위치로 이동
-        float randomX = Random.Range(-itemData.spawnAreaXZ.x, itemData.spawnAreaXZ.x);
-        float randomZ = Random.Range(-itemData.spawnAreaXZ.y, itemData.spawnAreaXZ.y);
-        transform.position = new Vector3(randomX, itemData.respawnHeight, randomZ);
-
-        // 대기
-        yield return new WaitForSeconds(itemData.respawnDelay);
-
-        // 콜라이더 활성화
-        if (itemCollider != null)
-        {
-            itemCollider.enabled = true;
-        }
-
-        isRespawning = false;
-    }
-
     public string GetItemName()
     {
         return itemData != null ? itemData.itemName : "Unknown Item";
@@ -123,5 +133,10 @@ public class ItemController : MonoBehaviour, IItem
     public Sprite GetIcon()
     {
         return itemData != null ? itemData.icon : null;
+    }
+
+    public void SetItemData(ItemData newItemData)
+    {
+        itemData = newItemData;
     }
 }
