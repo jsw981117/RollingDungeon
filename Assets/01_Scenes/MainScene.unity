@@ -2267,6 +2267,59 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1315064862}
   m_CullTransparentMesh: 1
+--- !u!1 &1360430570
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1360430572}
+  - component: {fileID: 1360430571}
+  m_Layer: 0
+  m_Name: ItemSpawner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1360430571
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1360430570}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 63137501774d7cc4eb717eaf46b980c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemsToSpawn:
+  - itemPrefab: {fileID: 4401772278687466781, guid: b4d066880f844da46ac2a63009b16a1b, type: 3}
+    itemData: {fileID: 11400000, guid: 7523f27ddf1cd28488c7c0a743ca452e, type: 2}
+    spawnProbability: 100
+    maxItemCount: 1
+    spawnDelay: 1
+    spawnedItems: []
+  spawnAreaXZ: {x: 20, y: 20}
+  spawnHeight: 18
+--- !u!4 &1360430572
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1360430570}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &1404936631 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8417699223338803218, guid: 6b71554d2c8d9c04ba202daa3c9e8796, type: 3}
@@ -3637,3 +3690,4 @@ SceneRoots:
   - {fileID: 1765512733}
   - {fileID: 1191667962748636693}
   - {fileID: 1900529811927378529}
+  - {fileID: 1360430572}
