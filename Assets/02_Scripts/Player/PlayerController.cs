@@ -14,29 +14,32 @@ public class PlayerController : MonoBehaviour
 
     // Ground 레이어 값 가져오기
     private int groundLayer;
+    private int trapLayer;
+
     public float rotateSpeed = 10.0f; // 회전 속도
-
-    float h, v;
-
     private Transform camTransform; // 메인 카메라의 Transform
+    private StatHandler statHandler;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         groundLayer = LayerMask.NameToLayer("Ground"); // "Ground" 레이어 값 가져오기
         camTransform = Camera.main.transform; // 메인 카메라의 Transform을 가져옴
+        statHandler = GetComponent<StatHandler>();
+        if (statHandler == null)
+        {
+            Debug.LogError("StatHandler가 Player에 없음!");
+        }
     }
 
     void OnEnable()
     {
-        PlayerEvent.OnScoreIncrease += IncreaseScore;
         PlayerEvent.OnHealthIncrease += Heal;
         PlayerEvent.OnStaminaIncrease += IncreaseStamina;
     }
 
     void OnDisable()
     {
-        PlayerEvent.OnScoreIncrease -= IncreaseScore;
         PlayerEvent.OnHealthIncrease -= Heal;
         PlayerEvent.OnStaminaIncrease -= IncreaseStamina;
     }
@@ -103,17 +106,12 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public void IncreaseScore(int value)
+    public void Heal(float value)
     {
-        Debug.Log($"Score increased by {value}");
+        statHandler.HealHealth(value);
     }
 
-    public void Heal(int value)
-    {
-        Debug.Log($"Health increased by {value}");
-    }
-
-    public void IncreaseStamina(int value)
+    public void IncreaseStamina(float value)
     {
         Debug.Log($"Stamina increased by {value}");
     }

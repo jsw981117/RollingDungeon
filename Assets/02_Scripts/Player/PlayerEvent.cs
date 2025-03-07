@@ -1,30 +1,24 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerEvent : MonoBehaviour
 {
-    public delegate void ScoreEvent(int value);
-    public static event ScoreEvent OnScoreIncrease;
+    public static event Action<float> OnHealthIncrease;
 
-    public delegate void HealthEvent(int value);
-    public static event HealthEvent OnHealthIncrease;
+    public static event Action<float> OnStaminaIncrease;
 
-    public delegate void StaminaEvent(int value);
-    public static event StaminaEvent OnStaminaIncrease;
 
-    public static void TriggerScoreIncrease(int value)
+    public static void TriggerHealthIncrease(float value)
     {
-        OnScoreIncrease?.Invoke(value);
-    }
-
-    public static void TriggerHealthIncrease(int value)
-    {
+        if (value <= 0) return;
         OnHealthIncrease?.Invoke(value);
     }
 
-    public static void TriggerStaminaIncrease(int value)
+    public static void TriggerStaminaIncrease(float value)
     {
+        if (value <= 0) return;
         OnStaminaIncrease?.Invoke(value);
     }
 }
