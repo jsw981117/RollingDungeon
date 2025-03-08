@@ -933,6 +933,14 @@ MonoBehaviour:
   moveSpeed: 5
   jumpForce: 7
   rotateSpeed: 10
+  maxStamina: 300
+  currentStamina: 0
+  staminaRegenRate: 5
+  doubleJumpCost: 100
+  dashCost: 100
+  dashForce: 50
+  dashCooldown: 0.5
+  dashDuration: 0.2
   descText: {fileID: 1315064864}
   rayDistance: 5
   rayBoxSize: {x: 5, y: 5, z: 5}
@@ -1013,6 +1021,22 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: 69073011-2408-42f5-a0ec-01500323d6cb
     m_ActionName: Player/Interaction[/Keyboard/e]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 668141231}
+        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+        m_MethodName: OnDash
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: f4ef17a1-aa18-4cb1-a929-34af413c49d6
+    m_ActionName: Player/Dash[/Mouse/rightButton]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player

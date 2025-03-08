@@ -21,6 +21,18 @@ public class PlayerController : MonoBehaviour
     private Transform camTransform; // 메인 카메라의 Transform
     private StatHandler statHandler;
 
+    [Header("Stamina")]
+    public float maxStamina = 300f;
+    public float currentStamina;
+    public float staminaRegenRate = 15f; // 초당 스태미나 회복량
+    public float doubleJumpCost = 100f;
+    public float dashCost = 100f;
+    public float dashForce = 30f; // 대시 힘 증가 (기존 10f에서 30f로)
+    public float dashCooldown = 0.5f;
+    private bool canDash = true;
+    private bool isDashing = false;
+    public float dashDuration = 0.2f;
+
     [Header("Item Detection")]
     public TextMeshProUGUI descText; // UI Text 컴포넌트 참조
     public float rayDistance = 5f; // 레이 캐스트 거리
@@ -47,6 +59,7 @@ public class PlayerController : MonoBehaviour
                 Debug.LogError("InventoryUI가 씬에 없음!");
             }
         }
+        currentStamina = maxStamina;
     }
 
     void OnEnable()
@@ -63,13 +76,17 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        Move();
+        if (!isDashing) // 대시 중이 아닐 때만 일반 이동 처리
+        {
+            Move();
+        }
         DetectItemInFront();
+        RegenerateStamina();
     }
 
     void FixedUpdate()
     {
-        if (moveInput.sqrMagnitude > 0.01f) // 입력이 있을 때만 방향 전환
+        if (moveInput.sqrMagnitude > 0.01f)
         {
             Vector3 moveDirection = new Vector3(moveInput.x, 0, moveInput.y);
 
@@ -90,7 +107,6 @@ public class PlayerController : MonoBehaviour
     void Move()
     {
         Vector3 moveDirection = new Vector3(moveInput.x, 0, moveInput.y);
-        // rb.velocity = new Vector3(moveDirection.x * moveSpeed, rb.velocity.y, moveDirection.z * moveSpeed);
         Vector3 camForward = camTransform.forward;
         Vector3 camRight = camTransform.right;
         camForward.y = 0;
@@ -112,9 +128,6 @@ public class PlayerController : MonoBehaviour
             rayDistance,                  // 거리
             itemLayerMask                 // 아이템 레이어 마스크
         );
-
-        // 디버그 시각화
-        Debug.DrawRay(transform.position, transform.forward * rayDistance, Color.red);
 
         if (hits.Length > 0)
         {
@@ -150,11 +163,67 @@ public class PlayerController : MonoBehaviour
 
     public void OnJump(InputAction.CallbackContext context)
     {
-        if (context.performed && isGrounded)
+        if (context.performed)
         {
-            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
-            isGrounded = false;
+            if (isGrounded)
+            {
+                // 기본 점프
+                rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+                isGrounded = false;
+            }
+            else if (currentStamina >= doubleJumpCost)
+            {
+                rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z); // 기존 y축 속도 초기화
+                rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+                ConsumeStamina(doubleJumpCost);
+            }
         }
+    }
+
+    public void OnDash(InputAction.CallbackContext context)
+    {
+        if (context.performed && canDash && currentStamina >= dashCost && !isDashing)
+        {
+            StartCoroutine(PerformDash());
+        }
+    }
+
+    private IEnumerator PerformDash()
+    {
+        isDashing = true;
+        canDash = false;
+
+        // 현재 속도 저장 및 초기화
+        Vector3 originalVelocity = rb.velocity;
+        rb.velocity = Vector3.zero;
+
+        // 대시 방향 계산 (플레이어가 바라보는 방향)
+        Vector3 dashDirection = transform.forward;
+
+        // 대시 적용 (ForceMode.VelocityChange를 사용하여 질량 무시)
+        rb.AddForce(dashDirection * dashForce, ForceMode.VelocityChange);
+
+        // 스태미나 소모
+        ConsumeStamina(dashCost);
+
+        Debug.Log($"대시 실행! 남은 스태미나: {currentStamina}, 속도: {rb.velocity.magnitude}");
+
+        // 대시 지속 시간
+        yield return new WaitForSeconds(dashDuration);
+
+        // 대시 종료
+        isDashing = false;
+
+        // 쿨다운 시간
+        yield return new WaitForSeconds(dashCooldown - dashDuration);
+        canDash = true;
+    }
+
+    private IEnumerator DashCooldown()
+    {
+        canDash = false;
+        yield return new WaitForSeconds(dashCooldown);
+        canDash = true;
     }
 
     // 장착 아이템 사용 입력 처리 (E 키)
@@ -182,6 +251,25 @@ public class PlayerController : MonoBehaviour
 
     public void IncreaseStamina(float value)
     {
-        Debug.Log($"Stamina increased by {value}");
+        if (value <= 0) return;
+
+        currentStamina += value;
+        currentStamina = Mathf.Clamp(currentStamina, 0, maxStamina);
+    }
+
+    private void ConsumeStamina(float amount)
+    {
+        currentStamina -= amount;
+        currentStamina = Mathf.Clamp(currentStamina, 0, maxStamina);
+    }
+
+    private void RegenerateStamina()
+    {
+        // 스태미나가 최대가 아니면 회복
+        if (currentStamina < maxStamina)
+        {
+            currentStamina += staminaRegenRate * Time.deltaTime * 3;
+            currentStamina = Mathf.Clamp(currentStamina, 0, maxStamina);
+        }
     }
 }
