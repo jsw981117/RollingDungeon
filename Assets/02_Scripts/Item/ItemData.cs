@@ -25,8 +25,6 @@ public class ItemData : ScriptableObject
 
     [Header("Respawn")]
     public bool shouldRespawn = true;
-    public float respawnDelay = 1f;
-    public bool isStarItem = false;  // Star 아이템(항상 리스폰됨)
 
     [Header("Sfx")]
     public AudioClip collectSound;

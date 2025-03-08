@@ -9,6 +9,7 @@ public class PlayerEvent : MonoBehaviour
     public static event Action<float> OnStaminaIncrease;
     public static event Action<ItemData> OnItemPickup;
     public static event Action<ItemData> OnItemUse;
+    public static event Action<ItemData> OnInventoryItemUse;
 
 
     public static void TriggerHealthIncrease(float value)
@@ -32,5 +33,10 @@ public class PlayerEvent : MonoBehaviour
     {
         if (itemData == null) return;
         OnItemUse?.Invoke(itemData);
+    }
+
+    public static void TriggerInventoryItemUse(ItemData itemData)
+    {
+        OnInventoryItemUse?.Invoke(itemData);
     }
 }

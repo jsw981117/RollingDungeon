@@ -10,17 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 24fa8ef6028b92d4cb62d0f58ce8dac6, type: 3}
-  m_Name: Item_Potion
+  m_Name: Item_Energy
   m_EditorClassIdentifier: 
-  itemName: Potion
-  description: just heal
-  icon: {fileID: 21300000, guid: bf4f7fd6c81d1884ea43160047d5a364, type: 3}
+  itemName: Energy
+  description: Stamina UP!!
+  icon: {fileID: 21300000, guid: bb0d46ae002c3d8419f8bcabcce720b6, type: 3}
   affectsScore: 1
   scoreValue: 5
-  affectsHealth: 1
-  healthValue: 30
-  affectsStamina: 0
-  staminaValue: 0
+  affectsHealth: 0
+  healthValue: 0
+  affectsStamina: 1
+  staminaValue: 100
   isEquippable: 1
   shouldRespawn: 1
   collectSound: {fileID: 0}
