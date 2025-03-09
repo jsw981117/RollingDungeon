@@ -40,6 +40,10 @@ public class PlayerController : MonoBehaviour
     public LayerMask itemLayerMask; // 아이템 레이어 마스크
     [SerializeField] private Inventory inventory;
 
+    [Header("Material Settings")]
+    public Material playerMaterial; // 플레이어 오브젝트의 머테리얼
+    private Color originalColor; // 원래 색상 저장
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -60,6 +64,11 @@ public class PlayerController : MonoBehaviour
             }
         }
         currentStamina = maxStamina;
+
+        if (playerMaterial != null)
+        {
+            originalColor = playerMaterial.color;
+        }
     }
 
     void OnEnable()
@@ -176,6 +185,8 @@ public class PlayerController : MonoBehaviour
                 rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z); // 기존 y축 속도 초기화
                 rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
                 ConsumeStamina(doubleJumpCost);
+
+                StartCoroutine(ChangeColorTemporarily(Color.yellow, 0.5f));
             }
         }
     }
@@ -193,11 +204,13 @@ public class PlayerController : MonoBehaviour
         isDashing = true;
         canDash = false;
 
+        StartCoroutine(ChangeColorTemporarily(Color.yellow, dashDuration)); // 대시 중에 색 변하는 연출
+
         // 현재 속도 저장 및 초기화
         Vector3 originalVelocity = rb.velocity;
         rb.velocity = Vector3.zero;
 
-        // 대시 방향 계산 (플레이어가 바라보는 방향)
+        // 대시 방향(플레이어가 바라보는 방향)
         Vector3 dashDirection = transform.forward;
 
         // 대시 적용 (ForceMode.VelocityChange를 사용하여 질량 무시)
@@ -206,25 +219,23 @@ public class PlayerController : MonoBehaviour
         // 스태미나 소모
         ConsumeStamina(dashCost);
 
-        Debug.Log($"대시 실행! 남은 스태미나: {currentStamina}, 속도: {rb.velocity.magnitude}");
-
-        // 대시 지속 시간
+        // 대시 지속 시간(지속시간 안넣으니까 진짜 아주 매우 짧게 대시됨)
         yield return new WaitForSeconds(dashDuration);
 
         // 대시 종료
         isDashing = false;
 
-        // 쿨다운 시간
+        // 대시 자체 쿨다운 적용
         yield return new WaitForSeconds(dashCooldown - dashDuration);
         canDash = true;
     }
 
-    private IEnumerator DashCooldown()
-    {
-        canDash = false;
-        yield return new WaitForSeconds(dashCooldown);
-        canDash = true;
-    }
+    //private IEnumerator DashCooldown()
+    //{
+    //    canDash = false;
+    //    yield return new WaitForSeconds(dashCooldown);
+    //    canDash = true;
+    //}
 
     // 장착 아이템 사용 입력 처리 (E 키)
     public void OnInteraction(InputAction.CallbackContext context)
@@ -270,6 +281,21 @@ public class PlayerController : MonoBehaviour
         {
             currentStamina += staminaRegenRate * Time.deltaTime * 3;
             currentStamina = Mathf.Clamp(currentStamina, 0, maxStamina);
+        }
+    }
+
+    private IEnumerator ChangeColorTemporarily(Color targetColor, float duration)
+    {
+        if (playerMaterial != null)
+        {
+            playerMaterial.color = targetColor; // 색상 변경
+        }
+
+        yield return new WaitForSeconds(duration); // 지정된 시간 대기
+
+        if (playerMaterial != null)
+        {
+            playerMaterial.color = originalColor; // 원래 색상으로 복원
         }
     }
 }
