@@ -8,7 +8,6 @@ public class ItemController : MonoBehaviour, IItem
 
     private BoxCollider itemCollider;
     private int playerLayer;
-    private bool isRespawning = false;
     private AudioSource audioSource;
 
     void Start()

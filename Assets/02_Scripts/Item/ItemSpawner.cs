@@ -27,7 +27,7 @@ public class ItemSpawner : MonoBehaviour
 
     [SerializeField] private List<SpawnPool> spawnPools = new List<SpawnPool>();
     [SerializeField] private Vector2 spawnAreaXZ = new Vector2(20f, 20f); // 스폰 영역
-    [SerializeField] private float spawnHeight = 1f; // 스폰 높이
+    [SerializeField] private List<float> spawnHeights = new List<float> { 1f }; // 스폰 높이
 
     private void Awake()
     {
@@ -76,7 +76,8 @@ public class ItemSpawner : MonoBehaviour
         // 랜덤 위치 계산
         float randomX = Random.Range(-spawnAreaXZ.x, spawnAreaXZ.x);
         float randomZ = Random.Range(-spawnAreaXZ.y, spawnAreaXZ.y);
-        Vector3 spawnPosition = new Vector3(randomX, spawnHeight, randomZ);
+        float randomHeight = GetRandomSpawnHeight();
+        Vector3 spawnPosition = new Vector3(randomX, randomHeight, randomZ);
 
         // 아이템 인스턴스 생성
         GameObject newItem = Instantiate(selectedItem.itemPrefab, spawnPosition, Quaternion.identity);
@@ -90,6 +91,18 @@ public class ItemSpawner : MonoBehaviour
 
         // 생성된 아이템 추적
         pool.spawnedItems.Add(newItem);
+    }
+
+    private float GetRandomSpawnHeight()
+    {
+        if (spawnHeights.Count == 0)
+        {
+            return 1f;
+        }
+
+        // 리스트에서 랜덤하게 하나의 높이 선택
+        int randomIndex = Random.Range(0, spawnHeights.Count);
+        return spawnHeights[randomIndex];
     }
 
     // 확률 기반으로 풀에서 아이템 선택
@@ -191,13 +204,5 @@ public class ItemSpawner : MonoBehaviour
             // 최대 개수에 도달하지 않았으면 스폰
             FillPool(pool);
         }
-    }
-
-    // 디버그용 - 맵에 있는 아이템 확인
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireCube(new Vector3(0, spawnHeight, 0),
-            new Vector3(spawnAreaXZ.x * 2, 0.1f, spawnAreaXZ.y * 2));
     }
 }

@@ -22,7 +22,7 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
-    public GameObject Player { get; private set; }
+    public GameObject Player;
     public PlayerController PlayerController { get; private set; }
     public StatHandler PlayerStatHandler { get; private set; }
 
@@ -35,20 +35,5 @@ public class PlayerManager : MonoBehaviour
         }
         _instance = this;
 
-        InitializePlayer();
-    }
-
-    private void InitializePlayer()
-    {
-        Player = GameObject.FindGameObjectWithTag("Player"); // "Player" 태그로 플레이어 찾기
-        if (Player != null)
-        {
-            PlayerController = Player.GetComponent<PlayerController>();
-            PlayerStatHandler = Player.GetComponent<StatHandler>();
-        }
-        else
-        {
-            Debug.LogError("Player 오브젝트를 찾을 수 없습니다!");
-        }
     }
 }
