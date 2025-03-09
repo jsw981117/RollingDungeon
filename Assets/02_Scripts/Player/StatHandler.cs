@@ -10,7 +10,7 @@ public class StatHandler : MonoBehaviour
     [Header("Health Settings")]
     [SerializeField] private float maxHealth = 100f;
 
-    public float currentHealth { get; private set; }
+    [SerializeField] public float currentHealth;
     private bool isDead = false;
 
 
@@ -20,6 +20,13 @@ public class StatHandler : MonoBehaviour
         OnHealthChanged?.Invoke(currentHealth, maxHealth);
     }
 
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            TakeDamage(10);
+        }
+    }
 
     public void TakeDamage(float damage)
     {

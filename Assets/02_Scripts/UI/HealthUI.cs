@@ -13,7 +13,7 @@ public class HealthUI : MonoBehaviour
         StatHandler.OnHealthChanged += UpdateHealthBar;
     }
 
-    private void OnDisable()
+    private void OnDestroy()
     {
         StatHandler.OnHealthChanged -= UpdateHealthBar;
     }

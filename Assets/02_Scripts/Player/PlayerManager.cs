@@ -24,7 +24,8 @@ public class PlayerManager : MonoBehaviour
 
     public GameObject Player;
     public PlayerController PlayerController { get; private set; }
-    public StatHandler PlayerStatHandler { get; private set; }
+    public StatHandler StatHandler { get; private set; }
+
 
     private void Awake()
     {

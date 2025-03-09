@@ -15,11 +15,10 @@ public class PlayerController : MonoBehaviour
     private bool isGrounded;
 
     private int groundLayer;
-    private int trapLayer;
 
     public float rotateSpeed = 10.0f; // 회전 속도
     private Transform camTransform; // 메인 카메라의 Transform
-    private StatHandler statHandler;
+    public StatHandler statHandler { get; private set; }
 
     [Header("Stamina")]
     public float maxStamina = 300f;
@@ -69,6 +68,7 @@ public class PlayerController : MonoBehaviour
         {
             originalColor = playerMaterial.color;
         }
+
     }
 
     void OnEnable()
@@ -91,6 +91,7 @@ public class PlayerController : MonoBehaviour
         }
         DetectItemInFront();
         RegenerateStamina();
+        rb.AddForce(Vector3.down * 10f, ForceMode.Acceleration);
     }
 
     void FixedUpdate()
@@ -229,13 +230,6 @@ public class PlayerController : MonoBehaviour
         yield return new WaitForSeconds(dashCooldown - dashDuration);
         canDash = true;
     }
-
-    //private IEnumerator DashCooldown()
-    //{
-    //    canDash = false;
-    //    yield return new WaitForSeconds(dashCooldown);
-    //    canDash = true;
-    //}
 
     // 장착 아이템 사용 입력 처리 (E 키)
     public void OnInteraction(InputAction.CallbackContext context)
