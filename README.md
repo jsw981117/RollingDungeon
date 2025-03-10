@@ -43,7 +43,7 @@ Input System을 이용한 플레이어 조작 기능
 설치 및 실행 방법
 -
 이 저장소 클론하시면 됩니다.
-https://github.com/jsw981117/MyDomain.git
+https://github.com/jsw981117/RollingDungeon.git
 
 Unity에서 여시고 BootScene에서 실행
 
