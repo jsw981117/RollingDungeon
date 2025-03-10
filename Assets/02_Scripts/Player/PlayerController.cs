@@ -260,21 +260,33 @@ public class PlayerController : MonoBehaviour
 
         currentStamina += value;
         currentStamina = Mathf.Clamp(currentStamina, 0, maxStamina);
+
+        PlayerEvent.TriggerStaminaChanged(currentStamina, maxStamina);
     }
 
     private void ConsumeStamina(float amount)
     {
         currentStamina -= amount;
         currentStamina = Mathf.Clamp(currentStamina, 0, maxStamina);
+
+        PlayerEvent.TriggerStaminaChanged(currentStamina, maxStamina);
     }
 
     private void RegenerateStamina()
     {
+        // 이전 스태미나 값 저장
+        float previousStamina = currentStamina;
+
         // 스태미나가 최대가 아니면 회복
         if (currentStamina < maxStamina)
         {
             currentStamina += staminaRegenRate * Time.deltaTime * 3;
             currentStamina = Mathf.Clamp(currentStamina, 0, maxStamina);
+
+            if (currentStamina != previousStamina)
+            {
+                PlayerEvent.TriggerStaminaChanged(currentStamina, maxStamina);
+            }
         }
     }
 

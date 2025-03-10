@@ -1,5 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerManager : MonoBehaviour
@@ -11,30 +10,32 @@ public class PlayerManager : MonoBehaviour
         {
             if (_instance == null)
             {
-                _instance = FindObjectOfType<PlayerManager>();
-                if (_instance == null)
-                {
-                    GameObject obj = new GameObject("PlayerManager");
-                    _instance = obj.AddComponent<PlayerManager>();
-                }
+                _instance = new GameObject("PlayerManager").AddComponent<PlayerManager>();
             }
             return _instance;
         }
     }
 
-    public GameObject Player;
-    public PlayerController PlayerController { get; private set; }
-    public StatHandler StatHandler { get; private set; }
-
+    public PlayerController PlayerController
+    {
+        get { return _playerController; }
+        set { _playerController = value; }
+    }
+    private PlayerController _playerController;
 
     private void Awake()
     {
-        if (_instance != null && _instance != this)
+        if (_instance == null)
         {
-            Destroy(gameObject);
-            return;
+            _instance = this;
+            DontDestroyOnLoad(gameObject);
         }
-        _instance = this;
-
+        else
+        {
+            if (_instance != this)
+            {
+                Destroy(gameObject);
+            }
+        }
     }
 }
