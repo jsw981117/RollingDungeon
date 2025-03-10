@@ -45,8 +45,6 @@ Input System을 이용한 플레이어 조작 기능
 이 저장소 클론하시면 됩니다.
 https://github.com/jsw981117/RollingDungeon.git
 
-Unity에서 여시고 BootScene에서 실행
-
 개발자
 -
 https://github.com/jsw981117
