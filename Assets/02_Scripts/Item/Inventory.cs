@@ -8,16 +8,26 @@ public class Inventory : MonoBehaviour
     private ItemData storedItem;
     [SerializeField] private Image itemIcon;
 
+    /// <summary>
+    /// 인벤토리 활성화 시 이벤트 구독
+    /// </summary>
     private void OnEnable()
     {
         PlayerEvent.OnItemPickup += StoreItem;
     }
 
+    /// <summary>
+    /// 인벤토리 비활성화 시 이벤트 구독 해제
+    /// </summary>
     private void OnDisable()
     {
         PlayerEvent.OnItemPickup -= StoreItem;
     }
 
+    /// <summary>
+    /// 아이템을 인벤토리에 저장하고 아이콘 업데이트
+    /// </summary>
+    /// <param name="itemData">저장할 아이템 데이터</param>
     public void StoreItem(ItemData itemData)
     {
         storedItem = itemData;
@@ -25,17 +35,17 @@ public class Inventory : MonoBehaviour
         itemIcon.gameObject.SetActive(true); // 아이콘 표시
     }
 
+    /// <summary>
+    /// 인벤토리에 저장된 아이템을 사용하고 인벤토리를 비우기
+    /// </summary>
     public void UseStoredItem()
     {
         if (storedItem == null) return;
 
-        // 인벤토리 아이템 사용 전용 이벤트 발생 (맵 아이템과 구분)
         PlayerEvent.TriggerInventoryItemUse(storedItem);
 
-        // 아이템 효과 적용을 위한 이벤트
         if (storedItem.isEquippable)
         {
-            // IItem 인터페이스가 구현된 임시 객체 생성하여 사용
             GameObject tempObject = new GameObject("TempItemForUse");
             ItemController tempItem = tempObject.AddComponent<ItemController>();
             tempItem.SetItemData(storedItem);
@@ -43,7 +53,6 @@ public class Inventory : MonoBehaviour
             Destroy(tempObject);
         }
 
-        // 인벤토리 비우기
         storedItem = null;
         itemIcon.gameObject.SetActive(false);
     }

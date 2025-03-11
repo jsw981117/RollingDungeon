@@ -25,12 +25,18 @@ public class FollowCamera : MonoBehaviour
         Cursor.visible = false;                   // 마우스 커서를 숨김
     }
 
+    /// <summary>
+    /// 매 프레임마다 카메라 회전과 위치를 업데이트
+    /// </summary>
     void LateUpdate()
     {
         HandleRotation(); // 마우스 회전 처리
         HandleMovement(); // 카메라 위치 업데이트
     }
 
+    /// <summary>
+    /// 마우스 입력을 기반으로 카메라 회전 처리
+    /// </summary>
     void HandleRotation()
     {
         float mouseX = Input.GetAxis("Mouse X") * rotationSpeed;
@@ -38,15 +44,16 @@ public class FollowCamera : MonoBehaviour
 
         rotationY += mouseX;
         rotationX -= mouseY;
-        rotationX = Mathf.Clamp(rotationX, -40f, 80f); // 상하 회전 제한 (과도한 기울기 방지)
+        rotationX = Mathf.Clamp(rotationX, -40f, 80f);
 
-        // 회전 적용
         transform.rotation = Quaternion.Euler(rotationX, rotationY, 0);
     }
 
+    /// <summary>
+    /// 타겟의 위치에 offset을 적용하여 카메라 위치 설정
+    /// </summary>
     void HandleMovement()
     {
-        // 타겟의 위치에 offset을 적용하여 카메라 위치 설정
         Vector3 targetPosition = Target.transform.position
             + transform.right * offsetX
             + transform.up * offsetY

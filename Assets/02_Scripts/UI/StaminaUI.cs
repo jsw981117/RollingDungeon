@@ -13,9 +13,11 @@ public class StaminaUI : MonoBehaviour
     private float currentStaminaValue;
     private float maxStaminaValue;
 
+    /// <summary>
+    /// 이벤트를 구독하고 초기 스태미나 값을 설정합니다.
+    /// </summary>
     private void OnEnable()
     {
-        // 이벤트 구독
         PlayerEvent.OnStaminaChanged += UpdateStaminaUI;
 
         // 초기 상태 설정을 위해 플레이어의 현재 스태미나 값 가져오기
@@ -28,23 +30,28 @@ public class StaminaUI : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 이벤트 구독을 해제합니다.
+    /// </summary>
     private void OnDisable()
     {
         // 이벤트 구독 해제
         PlayerEvent.OnStaminaChanged -= UpdateStaminaUI;
     }
 
+    /// <summary>
+    /// 스태미나 UI를 업데이트합니다.
+    /// </summary>
+    /// <param name="currentStamina">현재 스태미나 값</param>
+    /// <param name="maxStamina">최대 스태미나 값</param>
     private void UpdateStaminaUI(float currentStamina, float maxStamina)
     {
-        // 값 저장
         currentStaminaValue = currentStamina;
         maxStaminaValue = maxStamina;
 
-        // UI 업데이트
         float scale = currentStamina / maxStamina;
         stamina.transform.localScale = new Vector3(scale, 1, 1);
 
-        // 스태미나가 낮을 때 색상 변경
         stamina.color = (currentStamina <= lowStaminaThreshold) ? lowStaminaColor : normalColor;
     }
 }

@@ -1047,7 +1047,6 @@ MonoBehaviour:
   normalColor: {r: 1, g: 1, b: 0, a: 1}
   lowStaminaColor: {r: 0.47058824, g: 0.47058824, b: 0, a: 1}
   lowStaminaThreshold: 100
-  playerController: {fileID: 668141231}
 --- !u!4 &408873614 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8417699223338803218, guid: 6b71554d2c8d9c04ba202daa3c9e8796, type: 3}
@@ -4033,7 +4032,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spawnPools:
   - poolName: Star
-    maxItemCount: 2
+    maxItemCount: 7
     itemsInPool:
     - itemPrefab: {fileID: 525395308818363589, guid: d5e1b1fe23cee0a41a1363d65fe0ff49, type: 3}
       itemData: {fileID: 11400000, guid: 27eb7b1c64427ce43980f1da68d69503, type: 2}
@@ -4041,7 +4040,7 @@ MonoBehaviour:
       spawnDelay: 1
     spawnedItems: []
   - poolName: Items
-    maxItemCount: 1
+    maxItemCount: 3
     itemsInPool:
     - itemPrefab: {fileID: 4401772278687466781, guid: b4d066880f844da46ac2a63009b16a1b, type: 3}
       itemData: {fileID: 11400000, guid: 7523f27ddf1cd28488c7c0a743ca452e, type: 2}

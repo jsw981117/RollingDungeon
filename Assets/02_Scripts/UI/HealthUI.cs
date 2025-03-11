@@ -18,6 +18,11 @@ public class HealthUI : MonoBehaviour
         StatHandler.OnHealthChanged -= UpdateHealthBar;
     }
 
+    /// <summary>
+    /// 체력바를 업데이트하고 일정 시간 후 숨김
+    /// </summary>
+    /// <param name="currentHealth">현재 체력 값</param>
+    /// <param name="maxHealth">최대 체력 값</param>
     public void UpdateHealthBar(float currentHealth, float maxHealth)
     {
         gameObject.SetActive(true);
@@ -25,15 +30,19 @@ public class HealthUI : MonoBehaviour
 
         if (hideCoroutine != null)
         {
-            StopCoroutine(hideCoroutine); // 기존 코루틴이 실행 중이면 중지
+            StopCoroutine(hideCoroutine);
         }
         hideCoroutine = StartCoroutine(HideAfterDelay(3f));
         Debug.Log("체력바 Update");
     }
 
+    /// <summary>
+    /// 일정 시간 후 체력바를 숨김
+    /// </summary>
+    /// <param name="delay">지연 시간</param>
     private IEnumerator HideAfterDelay(float delay)
     {
-        yield return new WaitForSeconds(delay); // 3초 대기
-        gameObject.SetActive(false); // 체력바 숨기기
+        yield return new WaitForSeconds(delay);
+        gameObject.SetActive(false);
     }
 }

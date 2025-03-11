@@ -31,16 +31,18 @@ public class ItemController : MonoBehaviour, IItem
 
     void OnEnable()
     {
-        // 인벤토리 사용 이벤트만 구독 (맵에서의 사용과 구분)
         PlayerEvent.OnInventoryItemUse += HandleInventoryItemUse;
     }
 
     void OnDisable()
     {
-        // 이벤트 구독 해제
         PlayerEvent.OnInventoryItemUse -= HandleInventoryItemUse;
     }
 
+    /// <summary>
+    /// 플레이어와 충돌 시 아이템 사용 또는 인벤토리에 저장
+    /// </summary>
+    /// <param name="other">충돌한 콜라이더</param>
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.layer == playerLayer)
@@ -61,36 +63,37 @@ public class ItemController : MonoBehaviour, IItem
         }
     }
 
-    // 인벤토리에서 사용된 아이템 처리
+    /// <summary>
+    /// 인벤토리에서 사용된 아이템 처리
+    /// </summary>
+    /// <param name="usedItemData">사용된 아이템 데이터</param>
     private void HandleInventoryItemUse(ItemData usedItemData)
     {
         // 아무 처리도 하지 않음 - 맵에 있는 아이템은 인벤토리 사용에 영향받지 않음
         // 같은 종류의 아이템이라도 별도로 관리됨
     }
 
-    // 맵에서 직접 사용 시 호출(비장착 아이템)
+    /// <summary>
+    /// 맵에서 직접 사용 시 호출(비장착 아이템)
+    /// </summary>
     public void UseDirectly()
     {
-        // 아이템 효과 적용
         ApplyItemEffects();
-
-        // 효과음 재생
         PlayCollectSound();
-
-        // 맵에서 아이템 제거 및 리스폰 요청
         RequestRespawn();
     }
 
-    // IItem 인터페이스 구현 - 인벤토리에서 사용 시 호출됨
+    /// <summary>
+    /// IItem 인터페이스 구현 - 인벤토리에서 사용 시 호출
+    /// </summary>
     public void Use()
     {
-        // 아이템 효과 적용
         ApplyItemEffects();
-
-        // 인벤토리 아이템은 맵에 영향을 주지 않으므로 리스폰 요청 하지 않음
     }
 
-    // 아이템 효과 적용 메서드 (공통 로직)
+    /// <summary>
+    /// 아이템 효과 적용 메서드
+    /// </summary>
     private void ApplyItemEffects()
     {
         // 점수 처리
@@ -112,9 +115,11 @@ public class ItemController : MonoBehaviour, IItem
         }
     }
 
+    /// <summary>
+    /// 맵에서 아이템 제거 및 리스폰 요청
+    /// </summary>
     private void RequestRespawn()
     {
-        // 맵에서 아이템 제거 및 리스폰 요청
         if (itemData.shouldRespawn && ItemSpawner.Instance != null)
         {
             ItemSpawner.Instance.QueueItemRespawn(gameObject, itemData);
@@ -125,6 +130,9 @@ public class ItemController : MonoBehaviour, IItem
         }
     }
 
+    /// <summary>
+    /// 아이템 수집 사운드 재생
+    /// </summary>
     private void PlayCollectSound()
     {
         if (audioSource != null && itemData.collectSound != null)

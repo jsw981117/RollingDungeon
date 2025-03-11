@@ -4,20 +4,22 @@ using UnityEngine;
 
 public class DamageFloor : MonoBehaviour
 {
-    [SerializeField] private float damagePerSecond = 10f; // 초당 데미지
-    [SerializeField] private string playerLayerName = "Player"; // 플레이어 레이어 이름
+    [SerializeField] private float damagePerSecond = 10f;
+    [SerializeField] private string playerLayerName = "Player";
     [SerializeField] private StatHandler playerStatHandler;
     private bool isPlayerOnFloor = false;
-    private bool isDamageCoroutineRunning = false; // 데미지 코루틴이 실행 중인지 여부
+    private bool isDamageCoroutineRunning = false;
 
+    /// <summary>
+    /// 플레이어가 데미지 플로어와 충돌할 때 데미지를 적용합니다.
+    /// </summary>
+    /// <param name="collision">충돌 정보</param>
     private void OnCollisionEnter(Collision collision)
     {
-        // 플레이어 레이어와 충돌했는지 확인
         if (collision.gameObject.layer == LayerMask.NameToLayer(playerLayerName))
         {
             isPlayerOnFloor = true;
 
-            // 데미지 코루틴이 실행 중이 아니면 시작
             if (!isDamageCoroutineRunning)
             {
                 StartCoroutine(ApplyDamageOverTime());
@@ -25,30 +27,36 @@ public class DamageFloor : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 플레이어가 데미지 플로어에서 벗어날 때 데미지 적용을 중지합니다.
+    /// </summary>
+    /// <param name="collision">충돌 정보</param>
     private void OnCollisionExit(Collision collision)
     {
-        // 플레이어 레이어와 충돌이 끝났는지 확인
         if (collision.gameObject.layer == LayerMask.NameToLayer(playerLayerName))
         {
             isPlayerOnFloor = false;
         }
     }
 
+    /// <summary>
+    /// 플레이어가 데미지 플로어 위에 있는 동안 지속적으로 데미지를 적용합니다.
+    /// </summary>
+    /// <returns>IEnumerator</returns>
     private IEnumerator ApplyDamageOverTime()
     {
-        isDamageCoroutineRunning = true; // 코루틴 실행 중임을 표시
+        isDamageCoroutineRunning = true;
 
         while (isPlayerOnFloor)
         {
             if (playerStatHandler != null)
             {
-                playerStatHandler.TakeDamage(damagePerSecond); // 데미지 적용
+                playerStatHandler.TakeDamage(damagePerSecond);
             }
 
-            // 1초 대기
             yield return new WaitForSeconds(1f);
         }
 
-        isDamageCoroutineRunning = false; // 코루틴 종료
+        isDamageCoroutineRunning = false;
     }
 }

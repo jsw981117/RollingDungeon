@@ -23,31 +23,31 @@ public class PlayerController : MonoBehaviour
     [Header("Stamina")]
     public float maxStamina = 300f;
     public float currentStamina;
-    public float staminaRegenRate = 15f; // 초당 스태미나 회복량
+    public float staminaRegenRate = 15f;
     public float doubleJumpCost = 100f;
     public float dashCost = 100f;
-    public float dashForce = 30f; // 대시 힘 증가 (기존 10f에서 30f로)
+    public float dashForce = 30f;
     public float dashCooldown = 0.5f;
     private bool canDash = true;
     private bool isDashing = false;
     public float dashDuration = 0.2f;
 
     [Header("Item Detection")]
-    public TextMeshProUGUI descText; // UI Text 컴포넌트 참조
-    public float rayDistance = 5f; // 레이 캐스트 거리
-    public Vector3 rayBoxSize = new Vector3(0.5f, 0.5f, 0.5f); // 레이 박스 크기
-    public LayerMask itemLayerMask; // 아이템 레이어 마스크
+    public TextMeshProUGUI descText;
+    public float rayDistance = 5f;
+    public Vector3 rayBoxSize = new Vector3(0.5f, 0.5f, 0.5f);
+    public LayerMask itemLayerMask;
     [SerializeField] private Inventory inventory;
 
     [Header("Material Settings")]
-    public Material playerMaterial; // 플레이어 오브젝트의 머테리얼
-    private Color originalColor; // 원래 색상 저장
+    public Material playerMaterial;
+    private Color originalColor;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        groundLayer = LayerMask.NameToLayer("Ground"); // "Ground" 레이어 값 가져오기
-        camTransform = Camera.main.transform; // 메인 카메라의 Transform을 가져옴
+        groundLayer = LayerMask.NameToLayer("Ground");
+        camTransform = Camera.main.transform;
         statHandler = GetComponent<StatHandler>();
         if (statHandler == null)
         {
@@ -56,7 +56,7 @@ public class PlayerController : MonoBehaviour
 
         if (inventory == null)
         {
-            inventory = FindObjectOfType<Inventory>(); // 인벤토리 UI 자동 찾기
+            inventory = FindObjectOfType<Inventory>();
             if (inventory == null)
             {
                 Debug.LogError("InventoryUI가 씬에 없음!");
@@ -83,9 +83,12 @@ public class PlayerController : MonoBehaviour
         PlayerEvent.OnStaminaIncrease -= IncreaseStamina;
     }
 
+    /// <summary>
+    /// 이동 및 아이템 감지, 스태미나 회복
+    /// </summary>
     void Update()
     {
-        if (!isDashing) // 대시 중이 아닐 때만 일반 이동 처리
+        if (!isDashing)
         {
             Move();
         }
@@ -94,6 +97,9 @@ public class PlayerController : MonoBehaviour
         rb.AddForce(Vector3.down * 10f, ForceMode.Acceleration);
     }
 
+    /// <summary>
+    /// 이동 방향에 따라 캐릭터를 회전
+    /// </summary>
     void FixedUpdate()
     {
         if (moveInput.sqrMagnitude > 0.01f)
@@ -114,6 +120,9 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 플레이어 이동
+    /// </summary>
     void Move()
     {
         Vector3 moveDirection = new Vector3(moveInput.x, 0, moveInput.y);
@@ -127,38 +136,37 @@ public class PlayerController : MonoBehaviour
         rb.velocity = new Vector3(adjustedMoveDirection.x * moveSpeed, rb.velocity.y, adjustedMoveDirection.z * moveSpeed);
     }
 
+    /// <summary>
+    /// 플레이어 앞의 아이템을 감지
+    /// </summary>
     void DetectItemInFront()
     {
-        // 플레이어 정면 방향으로 BoxCast 수행
         RaycastHit[] hits = Physics.BoxCastAll(
-            transform.position,           // 시작 위치
-            rayBoxSize / 2,               // 박스의 반크기 
-            transform.forward,            // 방향
-            Quaternion.identity,          // 회전 없음
-            rayDistance,                  // 거리
-            itemLayerMask                 // 아이템 레이어 마스크
+            transform.position,
+            rayBoxSize / 2,
+            transform.forward,
+            Quaternion.identity,
+            rayDistance,
+            itemLayerMask
         );
 
         if (hits.Length > 0)
         {
             foreach (RaycastHit hit in hits)
             {
-                // 부딪힌 오브젝트가 IItem 인터페이스를 구현하는지 확인
                 IItem item = hit.collider.GetComponent<IItem>();
                 if (item != null)
                 {
-                    // 아이템 이름을 UI 텍스트에 표시
                     if (descText != null)
                     {
                         descText.text = item.GetItemName();
                     }
-                    return; // 첫 번째 감지된 아이템만 표시
+                    return;
                 }
             }
         }
         else
         {
-            // 아이템이 감지되지 않았으면 텍스트 초기화
             if (descText != null)
             {
                 descText.text = "";
@@ -200,6 +208,9 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 대시
+    /// </summary>
     private IEnumerator PerformDash()
     {
         isDashing = true;
@@ -207,31 +218,26 @@ public class PlayerController : MonoBehaviour
 
         StartCoroutine(ChangeColorTemporarily(Color.yellow, dashDuration)); // 대시 중에 색 변하는 연출
 
-        // 현재 속도 저장 및 초기화
         Vector3 originalVelocity = rb.velocity;
         rb.velocity = Vector3.zero;
 
-        // 대시 방향(플레이어가 바라보는 방향)
         Vector3 dashDirection = transform.forward;
-
-        // 대시 적용 (ForceMode.VelocityChange를 사용하여 질량 무시)
         rb.AddForce(dashDirection * dashForce, ForceMode.VelocityChange);
-
-        // 스태미나 소모
         ConsumeStamina(dashCost);
 
         // 대시 지속 시간(지속시간 안넣으니까 진짜 아주 매우 짧게 대시됨)
         yield return new WaitForSeconds(dashDuration);
 
-        // 대시 종료
         isDashing = false;
 
-        // 대시 자체 쿨다운 적용
         yield return new WaitForSeconds(dashCooldown - dashDuration);
         canDash = true;
     }
 
-    // 장착 아이템 사용 입력 처리 (E 키)
+    /// <summary>
+    /// 장착 아이템 사용 입력 처리 (E 키)
+    /// </summary>
+    /// <param name="context">입력 컨텍스트</param>
     public void OnInteraction(InputAction.CallbackContext context)
     {
         if (context.performed && inventory != null)
@@ -249,11 +255,19 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 체력을 회복
+    /// </summary>
+    /// <param name="value">회복할 체력 값</param>
     public void Heal(float value)
     {
         statHandler.HealHealth(value);
     }
 
+    /// <summary>
+    /// 스태미나 회복(아이템으로 순간적으로 회복)
+    /// </summary>
+    /// <param name="value">증가할 스태미나 값</param>
     public void IncreaseStamina(float value)
     {
         if (value <= 0) return;
@@ -264,6 +278,10 @@ public class PlayerController : MonoBehaviour
         PlayerEvent.TriggerStaminaChanged(currentStamina, maxStamina);
     }
 
+    /// <summary>
+    /// 스태미나 소모
+    /// </summary>
+    /// <param name="amount">소모할 스태미나 양</param>
     private void ConsumeStamina(float amount)
     {
         currentStamina -= amount;
@@ -272,6 +290,9 @@ public class PlayerController : MonoBehaviour
         PlayerEvent.TriggerStaminaChanged(currentStamina, maxStamina);
     }
 
+    /// <summary>
+    /// 스태미나 지속 회복
+    /// </summary>
     private void RegenerateStamina()
     {
         // 이전 스태미나 값 저장
@@ -290,6 +311,11 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 일시적으로 플레이어의 색상을 변경(멀티 점프, 대시 시 연출)
+    /// </summary>
+    /// <param name="targetColor">변경할 색상</param>
+    /// <param name="duration">변경 지속 시간</param>
     private IEnumerator ChangeColorTemporarily(Color targetColor, float duration)
     {
         if (playerMaterial != null)

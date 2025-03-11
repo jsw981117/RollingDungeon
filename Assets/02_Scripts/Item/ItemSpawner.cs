@@ -31,7 +31,6 @@ public class ItemSpawner : MonoBehaviour
 
     private void Awake()
     {
-        // 싱글톤 구현
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
@@ -43,14 +42,15 @@ public class ItemSpawner : MonoBehaviour
 
     private void Start()
     {
-        // 초기 아이템 스폰
         foreach (var pool in spawnPools)
         {
             FillPool(pool);
         }
     }
 
-    // 풀 내 아이템 모두 채우기
+    /// <summary>
+    /// 풀 내 아이템 모두 채우기
+    /// </summary>
     private void FillPool(SpawnPool pool)
     {
         int itemsToAdd = pool.maxItemCount - pool.spawnedItems.Count;
@@ -60,10 +60,11 @@ public class ItemSpawner : MonoBehaviour
         }
     }
 
-    // 특정 풀에서 아이템 스폰하기
+    /// <summary>
+    /// 특정 풀에서 아이템 스폰하기
+    /// </summary>
     private void SpawnItemInPool(SpawnPool pool)
     {
-        // 이미 최대 개수만큼 스폰됐는지 확인
         if (pool.spawnedItems.Count >= pool.maxItemCount)
         {
             return;
@@ -73,26 +74,25 @@ public class ItemSpawner : MonoBehaviour
         ItemSpawnInfo selectedItem = GetRandomItemFromPool(pool);
         if (selectedItem == null) return;
 
-        // 랜덤 위치 계산
         float randomX = Random.Range(-spawnAreaXZ.x, spawnAreaXZ.x);
         float randomZ = Random.Range(-spawnAreaXZ.y, spawnAreaXZ.y);
         float randomHeight = GetRandomSpawnHeight();
         Vector3 spawnPosition = new Vector3(randomX, randomHeight, randomZ);
 
-        // 아이템 인스턴스 생성
         GameObject newItem = Instantiate(selectedItem.itemPrefab, spawnPosition, Quaternion.identity);
 
-        // 아이템 컨트롤러 참조 업데이트
         ItemController itemController = newItem.GetComponent<ItemController>();
         if (itemController != null && selectedItem.itemData != null)
         {
             itemController.SetItemData(selectedItem.itemData);
         }
 
-        // 생성된 아이템 추적
         pool.spawnedItems.Add(newItem);
     }
 
+    /// <summary>
+    /// 랜덤 스폰 높이 계산
+    /// </summary>
     private float GetRandomSpawnHeight()
     {
         if (spawnHeights.Count == 0)
@@ -100,31 +100,28 @@ public class ItemSpawner : MonoBehaviour
             return 1f;
         }
 
-        // 리스트에서 랜덤하게 하나의 높이 선택
         int randomIndex = Random.Range(0, spawnHeights.Count);
         return spawnHeights[randomIndex];
     }
 
-    // 확률 기반으로 풀에서 아이템 선택
+    /// <summary>
+    /// 확률 기반으로 풀에서 아이템 선택
+    /// </summary>
     private ItemSpawnInfo GetRandomItemFromPool(SpawnPool pool)
     {
         if (pool.itemsInPool.Count == 0) return null;
 
-        // 총 확률 계산
         float totalProbability = 0;
         foreach (var item in pool.itemsInPool)
         {
             totalProbability += item.spawnProbability;
         }
 
-        // 확률이 0이면 반환 없음
         if (totalProbability <= 0) return null;
 
-        // 랜덤 값 생성
         float randomValue = Random.Range(0, totalProbability);
         float cumulativeProbability = 0;
 
-        // 확률에 따라 아이템 선택
         foreach (var item in pool.itemsInPool)
         {
             cumulativeProbability += item.spawnProbability;
@@ -134,14 +131,14 @@ public class ItemSpawner : MonoBehaviour
             }
         }
 
-        // 기본 반환값 (첫 번째 아이템)
         return pool.itemsInPool[0];
     }
 
-    // 아이템 사용/제거 후 스폰 큐에 등록
+    /// <summary>
+    /// 아이템 사용/제거 후 스폰 큐에 등록
+    /// </summary>
     public void QueueItemRespawn(GameObject itemObject, ItemData itemData)
     {
-        // 어떤 풀에 속하는지 확인
         SpawnPool targetPool = null;
         foreach (var pool in spawnPools)
         {
@@ -154,7 +151,6 @@ public class ItemSpawner : MonoBehaviour
 
         if (targetPool != null)
         {
-            // 아이템 정보 찾기
             ItemSpawnInfo matchingInfo = null;
             foreach (var item in targetPool.itemsInPool)
             {
@@ -165,43 +161,39 @@ public class ItemSpawner : MonoBehaviour
                 }
             }
 
-            // 추적 목록에서 제거
             targetPool.spawnedItems.Remove(itemObject);
 
-            // 딜레이 후 새로운 아이템 스폰
             if (matchingInfo != null)
             {
                 StartCoroutine(RespawnAfterDelay(targetPool, matchingInfo.spawnDelay));
             }
             else
             {
-                // 일치하는 정보가 없으면 기본 딜레이 사용
                 StartCoroutine(RespawnAfterDelay(targetPool, 5f));
             }
         }
 
-        // 원본 아이템 제거
         Destroy(itemObject);
     }
 
+    /// <summary>
+    /// 딜레이 후 아이템 스폰
+    /// </summary>
     private IEnumerator RespawnAfterDelay(SpawnPool pool, float delay)
     {
-        // 설정된 딜레이만큼 대기
         yield return new WaitForSeconds(delay);
 
-        // 새로운 아이템 스폰
         SpawnItemInPool(pool);
     }
 
-    // 모든 풀 체크 및 필요시 스폰
+    /// <summary>
+    /// 모든 풀 체크 및 필요시 스폰
+    /// </summary>
     public void CheckAndSpawnItems()
     {
         foreach (var pool in spawnPools)
         {
-            // 유효하지 않은 항목 제거
             pool.spawnedItems.RemoveAll(i => i == null);
-
-            // 최대 개수에 도달하지 않았으면 스폰
             FillPool(pool);
         }
     }
